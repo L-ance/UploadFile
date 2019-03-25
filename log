@@ -1,0 +1,31 @@
+2019-03-22 14:11:19,264 - root - INFO - info message
+2019-03-22 14:11:19,265 - root - WARNING - warning message
+2019-03-22 14:11:19,265 - root - ERROR - error message
+2019-03-22 14:11:19,265 - root - CRITICAL - critical message
+2019-03-22 14:11:19,689 - werkzeug - INFO -  * Running on http://127.0.0.1:5005/ (Press CTRL+C to quit)
+2019-03-22 14:11:19,693 - werkzeug - INFO -  * Restarting with stat
+2019-03-22 14:11:20,902 - root - INFO - info message
+2019-03-22 14:11:20,903 - root - WARNING - warning message
+2019-03-22 14:11:20,903 - root - ERROR - error message
+2019-03-22 14:11:20,903 - root - CRITICAL - critical message
+2019-03-22 14:11:25,550 - werkzeug - INFO - 127.0.0.1 - - [22/Mar/2019 14:11:25] "GET / HTTP/1.1" 404 -
+2019-03-22 14:11:30,181 - werkzeug - INFO - 127.0.0.1 - - [22/Mar/2019 14:11:30] "GET /auth/login HTTP/1.1" 200 -
+2019-03-22 14:11:48,743 - werkzeug - INFO - 127.0.0.1 - - [22/Mar/2019 14:11:48] "POST /auth/login HTTP/1.1" 302 -
+2019-03-22 14:11:48,857 - werkzeug - INFO - 127.0.0.1 - - [22/Mar/2019 14:11:48] "GET /show/ HTTP/1.1" 200 -
+2019-03-22 14:11:49,531 - werkzeug - INFO - 127.0.0.1 - - [22/Mar/2019 14:11:49] "GET /show/public/?dir=%2Fupload%2F HTTP/1.1" 200 -
+2019-03-22 14:11:49,537 - werkzeug - INFO - 127.0.0.1 - - [22/Mar/2019 14:11:49] "GET /show/private/?dir=%2Ftest1%2F HTTP/1.1" 200 -
+2019-03-22 14:14:57,524 - werkzeug - INFO - 127.0.0.1 - - [22/Mar/2019 14:14:57] "GET /show/public/?dir=%2Fupload%2Flance%2F HTTP/1.1" 200 -
+2019-03-22 14:15:09,554 - werkzeug - INFO - 127.0.0.1 - - [22/Mar/2019 14:15:09] "GET /show/public/?dir=%2Fupload%2Flance%2Faaaaa%2F HTTP/1.1" 200 -
+2019-03-22 14:15:10,941 - werkzeug - INFO - 127.0.0.1 - - [22/Mar/2019 14:15:10] "GET /show/public/?dir=%2Fupload%2Flance%2F HTTP/1.1" 200 -
+2019-03-22 14:18:19,312 - werkzeug - INFO -  * Detected change in 'C:\\Users\\Lance\\Desktop\\GIT\\uploadFile\\app\\__init__.py', reloading
+2019-03-22 14:18:19,426 - werkzeug - INFO -  * Restarting with stat
+2019-03-22 14:23:10,638 - werkzeug - INFO - 127.0.0.1 - - [22/Mar/2019 14:23:10] "GET /show/public/?dir=%2Fupload%2Flance%2Faaaaa%2F HTTP/1.1" 200 -
+2019-03-22 14:26:02,400 - werkzeug - INFO -  * Detected change in 'C:\\Users\\Lance\\Desktop\\GIT\\uploadFile\\app\\main\\views.py', reloading
+2019-03-22 14:26:02,457 - werkzeug - INFO -  * Restarting with stat
+2019-03-22 14:37:03,394 - werkzeug - INFO -  * Running on http://127.0.0.1:5005/ (Press CTRL+C to quit)
+2019-03-22 14:37:03,424 - werkzeug - INFO -  * Restarting with stat
+2019-03-22 14:37:09,082 - werkzeug - INFO - 127.0.0.1 - - [22/Mar/2019 14:37:09] "GET / HTTP/1.1" 404 -
+2019-03-22 14:37:22,668 - werkzeug - INFO - 127.0.0.1 - - [22/Mar/2019 14:37:22] "GET /auth/login HTTP/1.1" 200 -
+2019-03-22 14:37:25,707 - werkzeug - INFO - 127.0.0.1 - - [22/Mar/2019 14:37:25] "GET / HTTP/1.1" 404 -
+2019-03-22 14:38:51,200 - werkzeug - INFO - 127.0.0.1 - - [22/Mar/2019 14:38:51] "GET /auth/login HTTP/1.1" 200 -
+2019-03-22 14:38:54,656 - werkzeug - INFO - 127.0.0.1 - - [22/Mar/2019 14:38:54] "GET / HTTP/1.1" 404 -

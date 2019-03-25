@@ -1,0 +1,8 @@
+{"level": 0, "username": "sysuser", "/upload/lance/vmware.log": "vmware.log"}
+{"level": "0", "/upload/test1_cert_2019-03-21.key": "test1_cert_2019-03-21.key", "username": "test1"}
+{"level": "0", "/upload/test1_cert_2019-03-21.key": "test1_cert_2019-03-21.key", "username": "test1"}
+{"/upload/lance/GitHubDesktop.exe": "GitHubDesktop.exe", "username": "test1", "level": "0"}
+{"level": "0", "/upload/chrome.exe": "chrome.exe", "username": "test1"}
+{"level": "1", "username": "test2", "/upload/lance/aaaaa/liteide.exe": "liteide.exe"}
+{"level": "1", "/upload/\u5f20/C\u7a0b\u5e8f\u8bbe\u8ba1\u8bed\u8a00(\u7b2c2\u7248) \u4e2d\u6587.pdf": "C\u7a0b\u5e8f\u8bbe\u8ba1\u8bed\u8a00(\u7b2c2\u7248) \u4e2d\u6587.pdf", "username": "test2"}
+{"/upload/lance/aaaaa/lanternlist.txt.gz": "lanternlist.txt.gz", "username": "test2", "level": "1"}
