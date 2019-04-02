@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>安盟华御安全光隔离与信息传输系统</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/lib/layui/css/layui.css" media="all">
+    <script src="/static/lib/layui/layui.js" charset="utf-8"></script>
+    <script src="/static/js/jquery-3.2.1.min.js"></script>
+    {% block css %}
+
+    {% endblock %}
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div style="">
+            <ul class="layui-nav layui-bg-green">
+                <li class="layui-nav-item" style="font-size: 25px" id="product">
+                    <span style="margin-left: 20px; margin-right: 20px">|</span></li>
+                <li class="layui-nav-item" style="float: right">
+                    <a href="javascript:;"><i class="layui-icon"
+                                              style="font-size: 20px;font-weight: 700">&#xe66f;</i>{{ username }}</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('auth.logout') }}">退出</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item" style="margin-left: 50px;"><span id="devtype"></span></li>
+                <li class="layui-nav-item" style="margin-left: 5px;"><span id="version"></span></li>
+                <li class="layui-nav-item" style="float: right; margin-right: 100px">在线时长:<span id="online"></span></li>
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-side layui-bg-gray">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;">基本功能</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('show.index') }}">身份认证系统</a></dd>
+                        <dd><a href="{{ url_for('show.file') }}">文件上传系统</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+
+            {% block conetnt %}
+
+            {% endblock %}
+        </div>
+    </div>
+
+
+    <div class="layui-footer" style="left: 0;margin-top: 50px;text-align: center;font-size: 12px">
+
+        <span id="bottom"></span>
+
+    </div>
+</div>
+{#<script src="/static/lib/layui/layui.js"></script>#}
+<script>
+    //JavaScript代码区域
+    layui.use('element', function () {
+        var element = layui.element;
+        $.get('/auth/online', function (data) {
+            var sin_time = data.online;
+
+            setInterval(function () {
+                var timestamp = new Date();
+                timestamp = timestamp.getTime();
+
+                var time_diff = timestamp - parseInt(sin_time);
+                var hours = Math.floor((time_diff) / (3600 * 1000));
+
+                var leave2 = time_diff % (3600 * 1000);
+                var minutes = Math.floor(leave2 / (60 * 1000));
+
+
+                var leave3 = leave2 % (60 * 1000);
+                var seconds = Math.round(leave3 / 1000);
+
+                var time_str = hours + ' 小时 ' + minutes + ' 分钟 ' + seconds + ' 秒';
+
+                $('#online').empty();
+                $('#online').text(time_str);
+            }, 1000);
+        });
+        $.get('/auth/verpro/', function (data) {
+            {#console.log(data);#}
+            $('#bottom').text(data.bottom);
+            $('#product').text(data.product);
+            $('#version').text(data.version);
+            $('#devtype').text(data.devtype);
+        })
+    });
+</script>
+{% block js %}
+
+{% endblock %}
+</body>
+</html>

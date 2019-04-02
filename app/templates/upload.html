@@ -9,6 +9,7 @@
     <script src="/static/lib/layui/layui.js" charset="utf-8"></script>
     <script src="/static/js/jquery-3.2.1.min.js"></script>
     <style>
+
         .file-tab {
             margin-top: 20px;
             margin-bottom: 20px;
@@ -60,11 +61,11 @@
         }
     </style>
 </head>
-<body>
-<div>
+<body class="layui-layout-body" style="overflow-y:auto">
+<div class="layui-layout layui-layout-admin">
     <div style="">
         <ul class="layui-nav layui-bg-green">
-            <li class="layui-nav-item" style="font-size: 25px">信息传输系统
+            <li class="layui-nav-item" style="font-size: 25px" id="product">
                 <span style="margin-left: 20px; margin-right: 20px">|</span></li>
             <li class="layui-nav-item" style="float: right">
                 <a href="javascript:;"><i class="layui-icon"
@@ -73,7 +74,10 @@
                     <dd><a href="{{ url_for('auth.logout') }}">退出</a></dd>
                 </dl>
             </li>
-            <li class="layui-nav-item">在线时长:<span id="online"></span></li>
+
+            <li class="layui-nav-item" style="margin-left: 50px;"><span id="devtype"></span></li>
+            <li class="layui-nav-item" style="margin-left: 5px;" ><span id="version"></span></li>
+            <li class="layui-nav-item" style="float: right; margin-right: 100px">在线时长:<span id="online"></span></li>
         </ul>
     </div>
     <div class="container">
@@ -87,11 +91,11 @@
 
                     <div style="display: flex;">
                         <div class="layui-input-inline" style="margin-right: 8px;">
-                    <select name="type" lay-verify="required" id="type">
-                        <option value="0">公有区</option>
-                        <option value="1">私有区</option>
-                    </select>
-                </div>
+                            <select name="type" lay-verify="required" id="type">
+                                <option value="0">公有区</option>
+                                <option value="1">私有区</option>
+                            </select>
+                        </div>
                         <input id="up" type="text" readonly class="layui-input up_style">
                         <label id="btn" class="layui-btn layui-btn-normal lab_style" for="file">选择文件</label>
                         <button type="button" lay-submit lay-filter="file" class="layui-btn" id="sensitive">上传</button>
@@ -141,6 +145,10 @@
             </div>
         </div>
     </div>
+    <div class="layui-footer" style="left: 0;margin-top: 50px;text-align: center">
+
+        <span id="bottom" ></span>
+    </div>
 </div>
 <div style="display: none;margin-top: 5px;" id="demo_up" class="layui-progress layui-progress-big"
      lay-showpercent="true"
@@ -170,6 +178,7 @@
         </div>
     </div>
 </form>
+</div>
 <script type="text/javascript">
 
     var dire_private = "/{{private_dirs}}/";
@@ -266,6 +275,7 @@
     function show_dirs(url, dir, nod, ty) {
 
         $.get(url, {dir: dir}, function (data) {
+            console.log(22, data);
             nod.empty();
             for (var i = 0; i < data.dir.length; i++) {
                 nod.append("<tr style='cursor: pointer'><td title='进入该目录' id='" + ty + "_" + i + "' colspan='6' onclick='dir_into(this)'>" + "<i style='color: gold; font-size:20px;' class='layui-icon'>&#xe61d;</i><span>" + data.dir[i] + "</span><i class='layui-icon' style='float: right;color: greenyellow'>&#xe65b;</i></td></tr>");
@@ -434,6 +444,7 @@
                     if (result['status'] == 1) {
                         layer.msg('上传成功', {icon: 1, scrollbar: true, time: 2000});
                         if (result['type'] == 0) {
+                            console.log(11, '{{ url_for("show.public")}}');
                             show_dirs('{{ url_for("show.public")}}', result['path'], dir_1, 'pub');
                         } else {
                             show_dirs('{{ url_for("show.private")}}', result['path'], dir_2, 'pri');
@@ -471,18 +482,10 @@
             return false
         }
 
-        function fmtDate(obj) {
-            var date = new Date(obj);
-            var y = 1900 + date.getYear();
-            var m = "0" + (date.getMonth() + 1);
-            var d = "0" + date.getDate();
-            return y + "-" + m.substring(m.length - 2, m.length) + "-" + d.substring(d.length - 2, d.length);
-        }
-
-        $.get('/auth/online', function (data) {
+        $.get('/auth/online/', function (data) {
             var sin_time = data.online;
 
-            setInterval(function () {
+            var on_line = setInterval(function () {
                 var timestamp = new Date();
                 timestamp = timestamp.getTime();
 
@@ -503,6 +506,20 @@
             }, 1000);
         });
 
+        $.get('/auth/verpro/', function (data) {
+            $('#bottom').text(data.bottom);
+            $('#product').text(data.product);
+            $('#version').text(data.version);
+            $('#devtype').text(data.devtype);
+        });
+
+        function set_time() {
+            $.get("{{url_for('auth.upgrade_time')}}", function () {
+
+            });
+        }
+
+        setInterval(set_time, 5000);
     });
 
 </script>

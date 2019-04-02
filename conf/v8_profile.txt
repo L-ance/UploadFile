@@ -1,0 +1,14 @@
+# 以下内容写入到 /etc/profile 中, 替换就的内容
+
+export PATH=/usr/local/flask_iaf/venv35/bin:/bin:/sbin:/usr/bin:/usr/local/bin:/usr/sbin
+export LD_LIBRARY_PATH=/lib64:/usr/lib64:/lib:/usr/lib:/usr/local/flask_iaf/extend_lib/lib:/usr/local/flask_iaf/venv35/lib
+export PYTHONHOME=/usr/local/flask_iaf/extend_lib/lib/python3.5
+export PYTHONPATH=$PYTHONHOME:$PYTHONHOME/site-packages:$PYTHONHOME/lib-dynload:$PYTHONHOME/idlelib
+
+PYTHONENVHOME=/usr/local/flask_iaf/venv35/lib/python3.5
+export PYTHONPATH=$PYTHONHOME:$PYTHONENVHOME/site-packages:$PYTHONENVHOME/lib-dynload:$PYTHONHOME/idlelib
+
+# 以下内容写入到 /etc/init.d/service 中
+cd /var/opt/file_cli/uploadFile/
+nohup uwsgi --ini conf/uploadFile.ini &
+/usr/local/nginx/sbin/nginx

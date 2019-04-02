@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+
+{% block css %}
+    <link rel="stylesheet" media="screen" href="/static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/reset.css"/>
+    <style>
+        .msg ul li {
+            font-size: 16px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            margin-left: 40px;
+        }
+
+        .msg ul li span {
+            margin-left: 50px;
+        }
+
+        .layui-input-block {
+            margin-left: 44px;
+        }
+
+    </style>
+{% endblock %}
+
+{% block conetnt %}
+
+    <div id="particles-js">
+        <div class="login" style="margin-top: 50px">
+            <div class="login-top"
+                 style="font-size: 30px; margin-top: 50px;padding-left: 0;box-sizing: border-box;color: #333333;margin-bottom: 20px; text-align: center">
+                身份认证系统
+            </div>
+            <hr>
+            <div class="msg">
+                <ul>
+                    <li>用&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;户&nbsp;:&nbsp;<span>{{ username }}</span></li>
+                    <li>认&nbsp;&nbsp;证&nbsp;&nbsp;IP&nbsp;:&nbsp;<span>{{ ip }}</span></li>
+                    <li>认证状态&nbsp;:&nbsp;<span>已认证</span></li>
+                    {#                    <li>连线时长&nbsp;:&nbsp;</li>#}
+                </ul>
+            </div>
+{#            <hr>#}
+{#            <form class="layui-form" action="/show/strategy">#}
+{#                <div class="layui-form-item">#}
+{#                    <div class="layui-input-block">#}
+{#                        <input type="checkbox" id='http' name="http" title="HTTP">#}
+{#                        <input type="checkbox" id='ftp' name="ftp" title="FTP">#}
+{#                        <input type="checkbox" id='file' name="file" title="FILE" checked>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="layui-input-block">#}
+{#                    <button class="layui-btn" style="margin-left: 100px" lay-submit lay-filter="formDemo">保存</button>#}
+{#                </div>#}
+{#            </form>#}
+        </div>
+
+        <div class="sk-rotating-plane"></div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script src="/static/js/jquery-3.2.1.min.js"></script>
+    <script>
+        //Demo
+        layui.use('form', function () {
+            var form = layui.form;
+            element = layui.element;
+            //监听提交
+            /*
+            form.on('submit(formDemo)', function (data) {
+                var http;
+                var ftp;
+                var file;
+                $("input:checkbox[name='http']:checked").each(function () {
+                    http = $(this).val();
+                });
+                $("input:checkbox[name='ftp']:checked").each(function () {
+                    ftp = $(this).val();
+                });
+                $("input:checkbox[name='file']:checked").each(function () {
+                    file = $(this).val();
+                });
+                console.log(data.field)
+            });
+
+            {#var http_sta = "{{ http_sta }}";#}
+            {#var ftp_sta = "{{ ftp_sta }}";#}
+            {#var file_sta = "{{ ftp_sta }}";#}
+            var tem = "on";
+            if (http_sta==tem) {
+                document.getElementById('http').checked = true;
+                form.render();
+            }
+            if (ftp_sta==tem) {
+                document.getElementById('ftp').checked = true;
+                form.render();
+            }
+            $('#file').attr('disabled', true);
+
+            form.render();*/
+        });
+    </script>
+{% endblock %}

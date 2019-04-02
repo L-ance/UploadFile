@@ -1,0 +1,515 @@
+{% extends 'base.html' %}
+
+{% block css %}
+    <style>
+
+        .file-tab {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .tab_height {
+            max-height: 500px;
+            overflow-y: auto;
+            border-width: 0
+        }
+
+        .tab_bottom {
+            margin-bottom: 0
+        }
+
+        .i_sytle {
+            color: orange;
+            cursor: pointer;
+            float: right
+        }
+
+        .up_style {
+            border-right: 0;
+            -webkit-border-radius: 2px 0 0 2px;
+            -moz-border-radius: 2px 0 0 2px;
+            border-radius: 2px 0 0 2px;
+            width: 420px;
+        }
+
+        .lab_style {
+            font-weight: normal;
+            -webkit-border-radius: 0 2px 2px 0;
+            -moz-border-radius: 0 2px 2px 0;
+            border-radius: 0 2px 2px 0;
+        }
+
+        .i_add {
+            color: gold;
+            font-size: 24px;
+            font-weight: 700;
+            float: right;
+            cursor: pointer;
+        }
+
+        .i_del {
+            color: red;
+            font-size: 25px;
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block conetnt %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-11">
+                <div class="file-tab layui-form">
+
+                    <input type="file" onchange="get_file_name(this.name)" name="file" readonly id="file"
+                           style="display: none;">
+                    <div class="layui-upload">
+
+                        <div style="display: flex;">
+                            <div class="layui-input-inline" style="margin-right: 8px;">
+                                <select name="type" lay-verify="required" id="type">
+                                    <option value="0">公有区</option>
+                                    <option value="1">私有区</option>
+                                </select>
+                            </div>
+                            <input id="up" type="text" readonly class="layui-input up_style">
+                            <label id="btn" class="layui-btn layui-btn-normal lab_style" for="file">选择文件</label>
+                            <button type="button" lay-submit lay-filter="file" class="layui-btn" id="sensitive">上传
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-11">
+                <div class="panel panel-success">
+                    <div class="panel-heading"><span>公有区</span><i id="add_pub" class="layui-icon i_add" title="添加目录">&#xe61f;</i><span></span>
+                    </div>
+                    <div class="tab_height">
+                        <table class="table table-bordered tab_bottom">
+                            <thead>
+                            <tr>
+                                <th colspan="6">
+                                    目录/文件列表<i class="layui-icon i_sytle" title="返回上级目录" id="pub_p"
+                                              onclick="dir_into(this)">&#xe65a;</i>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody id="dir_1">
+
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-11">
+                <div class="panel panel-success">
+                    <div class="panel-heading"><span>私有区</span><i id="add_pri" class="layui-icon i_add" title="添加目录">&#xe61f;</i><span></span>
+                    </div>
+                </div>
+                <div class="tab_height">
+                    <table class="table table-bordered tab_bottom">
+                        <thead>
+                        <tr>
+                            <th colspan='5'>
+                                目录/文件列表<i class="layui-icon i_sytle" title="返回上级目录" id="pri_p"
+                                          onclick="dir_into(this)">&#xe65a;</i>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody id="dir_2">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <div style="display: none;margin-top: 5px;" id="demo_up" class="layui-progress layui-progress-big"
+         lay-showpercent="true"
+         lay-filter="demo">
+        <div id="progress" class="layui-progress-bar layui-bg-red" lay-percent="0%"></div>
+    </div>
+    <form class="layui-form" style="display: none;" id="add_dir">
+        <div class="file-tab">
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    目录名
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="add" name="add" autocomplete="off" class="layui-input">
+                    <span id="add_err" style="color: red"></span>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="x-red">&nbsp;</span>
+                </label>
+                <div class="layui-input-inline">
+                    <button class="layui-btn" type="button" lay-filter="add_dirs" lay-submit="">
+                        保存
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <script type="text/javascript">
+
+        var dire_private = "/{{private_dirs}}/";
+        var dire = "/{{public_dirs}}/";
+        var dir_1 = $('#dir_1');
+        var dir_2 = $('#dir_2');
+        var tip1 = 0;
+        var permi = 0; //公有
+
+        function dir_into(ths) {
+            if (ths.id.split('_')[0] == 'pri') {
+                if (ths.id == 'pri_p') {
+                    if (dire_private == "/{{private_dirs}}/") {
+                        return false
+                    }
+                    var dir_lst = dire_private.split('/');
+                    var res = dir_lst.slice(0, -2);
+                    if (res) {
+                        dire_private = res.join('/');
+                        var d_last = dire_private.charAt(dire_private.length - 1);
+                        if (d_last && d_last != '/') {
+                            dire_private = dire_private + '/';
+                        } else {
+                            dire_private = "/{{private_dirs}}/";
+                        }
+                    }
+                } else {
+                    dire_private = dire_private + ths.children[1].innerHTML + '/';
+                }
+
+                show_dirs('{{ url_for("show.private")}}', dire_private, dir_2, 'pri');
+            } else if (ths.id.split('_')[0] == 'pub') {
+                if (ths.id == 'pub_p') {
+                    if (dire == "/{{public_dirs}}/") {
+                        return false
+                    }
+                    var dir_lst = dire.split('/');
+                    var res = dir_lst.slice(0, -2);
+                    if (res) {
+                        dire = res.join('/');
+                        var dr_last = dire.charAt(dire.length - 1);
+                        if (dr_last && dr_last != '/') {
+                            dire = dire + '/';
+                        } else {
+                            dire = "/{{public_dirs}}/";
+                        }
+                    }
+                } else {
+                    dire = dire + ths.children[1].innerHTML + '/';
+                }
+
+                show_dirs('{{ url_for("show.public")}}', dire, dir_1, 'pub');
+            }
+
+        }
+
+        function del_file(ths) {
+            layer.confirm('确定要删除吗', function (index) {
+
+                var file_del = ths.parentNode.parentNode.children[0].children[0].children[1].innerHTML;
+                var f_ty = ths.id.split('_')[0];
+                if (f_ty == 'pu') {
+                    file_del = dire + file_del;
+                } else {
+                    file_del = dire_private + file_del;
+                }
+
+                $.ajax({
+                    url: '/main/rv_file/',
+                    type: 'DELETE',
+                    data: JSON.stringify({file: file_del}),
+                    headers: {
+                        "X-CSRFTOKEN": "{{csrf_token()}}"
+                    },
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.status == 1) {
+                            if (f_ty == 'pu') {
+                                show_dirs('{{ url_for("show.public")}}', dire, dir_1, 'pub');
+                            } else {
+                                show_dirs('{{ url_for("show.private")}}', dire_private, dir_2, 'pri');
+                            }
+                            layer.msg('删除成功', {icon: 1, scrollbar: true, time: 2000});
+                        } else {
+                            layer.msg('删除失败', {icon: 8, scrollbar: true, time: 2000});
+                        }
+                    }
+                });
+            });
+
+        }
+
+        function show_dirs(url, dir, nod, ty) {
+
+            $.get(url, {dir: dir}, function (data) {
+                console.log(22, data)
+                nod.empty();
+                for (var i = 0; i < data.dir.length; i++) {
+                    nod.append("<tr style='cursor: pointer'><td title='进入该目录' id='" + ty + "_" + i + "' colspan='6' onclick='dir_into(this)'>" + "<i style='color: gold; font-size:20px;' class='layui-icon'>&#xe61d;</i><span>" + data.dir[i] + "</span><i class='layui-icon' style='float: right;color: greenyellow'>&#xe65b;</i></td></tr>");
+                }
+                for (var n = 0; n < data.file.length; n++) {
+                    var url_addr = '/main/download?d=' + dir + data.file[n];
+                    url_addr = encodeURI(url_addr);
+                    if (ty == 'pub') {
+                        var p_td = "<tr><td><a href=" + url_addr + ">" + "<i style='color:#b2dba1;font-size:20px;' class='layui-icon'>&#xe621;</i><span>" + data.file[n] + "</span></a></td>" +
+                            "<td width='20%'>" + data.file_size[n] + " B</td>" +
+                            "<td width='20%'>" + data.file_type[n] + "</td>" +
+                            "<td width='10%'>" + data.file_level[n] + "</td>" +
+                            "<td width='20%'>" + data.modify_time[n] + "</td>" +
+                            "<td width='50'><i id='pu_'" + n + " title='删除文件' onclick='del_file(this)' class='layui-icon i_del'>&#xe640;</i></td>" +
+                            "</tr>";
+                    } else {
+                        var p_td = "<tr><td><a href=" + url_addr + ">" + "<i  style='color:#b2dba1;font-size:20px;' class='layui-icon'>&#xe621;</i><span>" + data.file[n] + "</span></a></td>" +
+                            "<td width='20%'>" + data.file_size[n] + " B</td>" +
+                            "<td width='20%'>" + data.file_type[n] + "</td>" +
+                            "<td width='20%'>" + data.modify_time[n] + "</td>" +
+                            "<td width='50'><i id='pr_'" + n + " onclick='del_file(this)' title='删除文件' class='layui-icon i_del'>&#xe640;</i></td>" +
+                            "</tr>";
+                    }
+
+                    nod.append(p_td);
+                }
+            });
+        }
+
+        function get_file_name(name) {
+            var file_input = document.getElementById(name);
+            var file = file_input.files[0];
+
+            if (name === 'file') {
+                $('#up').empty();
+                $('#up').val(file.name);
+            }
+        }
+
+        layui.use(['element', 'form'], function () {
+            var form = layui.form
+                , element = layui.element;
+
+            form.render();
+
+            show_dirs('{{ url_for("show.public")}}', dire, dir_1, 'pub');
+
+            show_dirs('{{ url_for("show.private")}}', dire_private, dir_2, 'pri');
+
+            form.on('submit(file)', function () {
+                uploadFile('file', '{{ url_for("main.upload") }}');
+            });
+
+            $('#add_pub').click(function (nod) {
+                add_dirs(nod.target.id);
+            });
+
+            $('#add_pri').click(function (nod) {
+                add_dirs(nod.target.id);
+            });
+
+            //监听添加目录的提交
+            form.on('submit(add_dirs)', function (dat) {
+
+                if (!dat.field.add) {
+                    layer.close(tip1);
+                    return false
+                }
+
+                dat.field.type = permi;
+                if (permi == 0) {
+                    dat.field.original = dire;
+                } else {
+                    dat.field.original = dire_private
+                }
+
+                $.ajax({
+                    url: '/main/make_dir/',
+                    type: 'POST',
+                    data: JSON.stringify(dat.field),
+                    headers: {
+                        "X-CSRFTOKEN": "{{csrf_token()}}"
+                    },
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.status == 1) {
+                            if (permi == 0) {
+                                show_dirs('{{ url_for("show.public")}}', dire, dir_1, 'pub');
+                            } else {
+                                show_dirs('{{ url_for("show.private")}}', dire_private, dir_2, 'pri');
+                            }
+
+                            layer.close(tip1);
+                            layer.msg('目录创建成功', {icon: 1, scrollbar: true, time: 2000});
+
+                        } else if (data.status == 0) {
+                            layer.close(tip1);
+                            layer.msg('目录创建失败', {icon: 8, scrollbar: true, time: 2000});
+                        } else if (data.status == 2) {
+                            $('#add_err').text(data.msg);
+                        } else {
+                            layer.close(tip1);
+                        }
+                    }
+                });
+            });
+
+            function add_dirs(nod_id) {
+                tip1 = layer.open({
+                    type: 1,
+                    title: '添加目录',
+                    skin: 'layui-layer-rim',
+                    area: ['420px', '220px'],
+                    content: $('#add_dir'),
+                    success: function () {
+                        $('#add').val('');
+                        $('#add_err').empty();
+                        if (nod_id == 'add_pri') {
+                            permi = 1;
+                        }
+                    }
+                });
+            }
+
+            function uploadFile(fs, url) {
+                var fd = new FormData();
+
+                if (document.getElementById(fs).files.length === 0) {
+                    layer.msg('请选择文件', {icon: 8, scrollbar: true, time: 2000});
+                    return false
+                }
+
+                tip = layer.open({
+                    type: 1,
+                    title: '上传',
+                    skin: 'layui-layer-rim',
+                    closeBtn: 0,
+                    area: ['420px', '100px'],
+                    content: $('#demo_up'),
+                    success: function (layero, index) {
+                        element.progress('demo', '0%');
+                    }
+                });
+
+                fd.append('file', document.getElementById(fs).files[0]);
+                if ($('#type').val() == '0') {
+                    fd.append('dir', dire);
+                    fd.append('type', 0);
+                } else {
+                    fd.append('dir', dire_private);
+                    fd.append('type', 1);
+                }
+
+                var xhr = new XMLHttpRequest();
+                xhr.upload.addEventListener("progress", uploadProgress, false);
+                xhr.addEventListener("error", uploadFailed, false);
+                xhr.addEventListener("abort", uploadCanceled, false);
+                xhr.open("POST", url);
+                xhr.setRequestHeader("X-CSRFTOKEN", "{{csrf_token()}}");
+                xhr.send(fd);
+                xhr.onreadystatechange = function () {
+                    layer.close(tip);
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        var result = JSON.parse(xhr.responseText);
+                        if (result['status'] == 1) {
+                            layer.msg('上传成功', {icon: 1, scrollbar: true, time: 2000});
+                            if (result['type'] == 0) {
+                                console.log(11, '{{ url_for("show.public")}}');
+                                show_dirs('{{ url_for("show.public")}}', result['path'], dir_1, 'pub');
+                            } else {
+                                show_dirs('{{ url_for("show.private")}}', result['path'], dir_2, 'pri');
+                            }
+
+                        } else {
+                            layer.msg(JSON.parse('上传失败'), {icon: 8, scrollbar: true, time: 2000});
+                        }
+                    }
+                }
+            }
+
+            // 读取文件上传进度
+            function uploadProgress(evt) {
+                if (evt.lengthComputable) {
+                    var percent = Math.round(evt.loaded * 100 / evt.total);
+                    element.progress('demo', percent.toFixed(2) + '%');
+                }
+            }
+
+            // 失败后的提示
+            function uploadFailed(evt) {
+                layer.msg("未知错误", {icon: 8, scrollbar: true, time: 2000});
+                layer.close(tip);
+                return false
+            }
+
+            function uploadCanceled(evt) {
+                layer.msg("文件上传被取消", {
+                    icon: 8,
+                    scrollbar: true,
+                    time: 2000
+                });
+                layer.close(tip);
+                return false
+            }
+
+            function fmtDate(obj) {
+                var date = new Date(obj);
+                var y = 1900 + date.getYear();
+                var m = "0" + (date.getMonth() + 1);
+                var d = "0" + date.getDate();
+                return y + "-" + m.substring(m.length - 2, m.length) + "-" + d.substring(d.length - 2, d.length);
+            }
+
+            $.get('/auth/online/', function (data) {
+                var sin_time = data.online;
+
+                setInterval(function () {
+                    var timestamp = new Date();
+                    timestamp = timestamp.getTime();
+
+                    var time_diff = timestamp - parseInt(sin_time);
+                    var hours = Math.floor((time_diff) / (3600 * 1000));
+
+                    var leave2 = time_diff % (3600 * 1000);
+                    var minutes = Math.floor(leave2 / (60 * 1000));
+
+
+                    var leave3 = leave2 % (60 * 1000);
+                    var seconds = Math.round(leave3 / 1000);
+
+                    var time_str = hours + ' 小时 ' + minutes + ' 分钟 ' + seconds + ' 秒';
+
+                    $('#online').empty();
+                    $('#online').text(time_str);
+                }, 1000);
+            });
+            $.get('/auth/verpro/', function (data) {
+                $('#bottom').text(data.bottom);
+                $('#product').text(data.product);
+                $('#version').text(data.version);
+                $('#devtype').text(data.devtype);
+            });
+
+            function set_time() {
+                $.get("{{url_for('auth.upgrade_time')}}", function () {
+
+                });
+            }
+
+            setInterval(set_time, 5000);
+
+
+        });
+    </script>
+{% endblock %}

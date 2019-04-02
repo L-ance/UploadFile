@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>信息传输系统</title>
+    <title> {{ res.product }}</title>
     <meta name="description" content="">
     <meta name="author" content=""/>
     <meta name="viewport"
@@ -11,6 +11,7 @@
     <link rel="stylesheet" type="text/css" href="/static/css/reset.css"/>
     <link rel="stylesheet" type="text/css" href="/static/lib/layui/css/layui.css"/>
     <script src="/static/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/js/md5.js"></script>
     <style>
         .file {
             position: relative;
@@ -41,6 +42,7 @@
             color: #004974;
             text-decoration: none;
         }
+
         .b_input {
             float: right;
             width: 68px;
@@ -49,9 +51,10 @@
             position: relative;
             padding: 2px 5px 2px 5px;
         }
-        .err_r{
+
+        .err_r {
             color: red;
-            margin-left: 73px;
+            margin-left: 47px;
         }
     </style>
 </head>
@@ -61,14 +64,15 @@
     <div class="login">
         <div class="login-top"
              style="font-size: 18px; margin-top: 50px;padding-left: 0;box-sizing: border-box;color: #333333;margin-bottom: 50px; text-align: center">
-            安盟华御安全光隔离与信息传输系统
+            {{ res.product }}
         </div>
         <form class="form-signin" method="post" enctype="multipart/form-data" id="login_form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="login-center clearfix">
                 <div class="login-center-img"><img src="/static/img/name.png"/></div>
                 <div class="login-center-input">
-                    <input type="text" name="username" value="" placeholder="请输入您的用户名" onfocus="this.placeholder=''"
+                    <input id='user' type="text" name="username" value="" placeholder="请输入您的用户名"
+                           onfocus="this.placeholder=''"
                            onblur="this.placeholder='请输入您的用户名'"/>
                     <div class="login-center-input-text">用户名</div>
                 </div>
@@ -76,7 +80,7 @@
             <div class="login-center clearfix">
                 <div class="login-center-img"><img src="/static/img/password.png"/></div>
                 <div class="login-center-input">
-                    <input type="password" name="password" value="" placeholder="请输入您的密码" onfocus="this.placeholder=''"
+                    <input id='pwd' type="password" name="password" value="" placeholder="请输入您的密码" onfocus="this.placeholder=''"
                            onblur="this.placeholder='请输入您的密码'"/>
                     <div class="login-center-input-text">密码</div>
                 </div>
@@ -87,14 +91,15 @@
                     <input id="file_name" type="text" name="file_name" readonly/>
                 </div>
                 <div class="b_input file" style="margin-top: -35px;z-index: 9999">
-                    <input id="authorized_file" type="file" name="authorized_file" onchange="get_file_name(this.id)"><span >授权文件</span>
+                    <input id="authorized_file" type="file" name="authorized_file"
+                           onchange="get_file_name(this.id)"><span>授权文件</span>
                 </div>
             </div>
-            <span class="err_r">{{ msg }}</span>
+            <span class="err_r" id="err">{{ msg }}</span>
             <div class="login-center clearfix">
-                <input type="submit" onclick="login_file()" value="登录" class="layui-btn layui-btn-normal" style="width: 273px">
+                <input type="button" onclick="login_file()" value="登录" class="layui-btn layui-btn-normal"
+                       style="width: 273px">
             </div>
-
         </form>
     </div>
 
@@ -102,7 +107,7 @@
 </div>
 <script>
 
-    function get_file_name(ths){
+    function get_file_name(ths) {
         var file_input = document.getElementById(ths);
         var file = file_input.files[0];
         $('#file_name').val(file.name);
@@ -110,6 +115,7 @@
 
     var login_file = function () {
         var formData = new FormData($('#login_form')[0]);
+        formData.set('password', hex_md5(formData.get('password')));
         $.ajax({
             url: "/auth/login",
             type: "POST",
@@ -118,7 +124,12 @@
             cashe: false,
             contentType: false,
             processData: false,
-            success: function (returndata) {
+            success: function (data) {
+                if (data.status == 2) {
+                    $('#err').text(data.msg);
+                } else {
+                    window.location = data.url;
+                }
             }
         })
     }

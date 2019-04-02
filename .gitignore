@@ -1,2 +1,13 @@
-.idea
-
+.idea/
+../.idea/
+.pyc
+venv/
+upload/
+__pycache__/
+test2/
+migrations/
+.xml
+test/
+.views.py.swo
+.views.py.swp
+permission
